@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  <h1>{% block title %}Transcriptions{% endblock %}</h1>
+  {% if g.user %}
+    <a class="action" href="{{ url_for('transcribe.create') }}">New</a>
+  {% endif %}
+{% endblock %}
+
+{% block content %}
+  {% for transcription in transcriptions %}
+    <article class="post">
+      <header>
+        <div>
+          <h1>{{ transcription['title'] }}</h1>
+          <div class="about">by {{ transcription['username'] }} on {{ transcription['created'].strftime('%Y-%m-%d') }}</div>
+        </div>
+        {% if g.user['id'] == transcription['author_id'] %}
+          <a class="action" href="{{ url_for('transcribe.update', id=transcription['id']) }}">Edit</a>
+        {% endif %}
+      </header>
+      <p class="body">{{ transcription['body'] }}</p>
+    </article>
+    {% if not loop.last %}
+      <hr>
+    {% endif %}
+  {% endfor %}
+{% endblock %}

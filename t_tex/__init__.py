@@ -34,4 +34,6 @@ def create_app(test_config=None):
     app.register_blueprint(transcribe.bp)
     app.add_url_rule('/', endpoint='index')
 
+
+
     return app

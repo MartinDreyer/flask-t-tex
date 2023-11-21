@@ -6,9 +6,12 @@ from werkzeug.exceptions import abort
 from t_tex.auth import login_required
 from t_tex.db import get_db
 
+
 bp = Blueprint('transcribe', __name__)
 
-@bp.route('/')
+
+
+@bp.route('/', methods=['GET'])
 @login_required
 def index():
     db = get_db()
@@ -20,13 +23,16 @@ def index():
 
     return render_template('transcribe/index.html', transcriptions=transcriptions)
 
+
+
 @bp.route('/create', methods=('GET', 'POST'))
 @login_required
 def create():
     if request.method == 'POST':
+
         title = request.form['title']
         body = request.form['body']
-        error = None
+        error = None        
 
         if not title:
             error = 'Title is required.'

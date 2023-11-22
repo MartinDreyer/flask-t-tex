@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  <h1>{% block title %}Upload File{% endblock %}</h1>
+{% endblock %}
+
+{% block content %}
+
+<div id="upload-form-container" class="content-box">
+    <script src="{{url_for('static', filename="upload_utils.js")}}"></script>
+    <form id="uploadForm" method="post" enctype="multipart/form-data">
+        <label for="fileInput" class="form" ondrop="handleDrop(event)" ondragover="handleDragOver(event)">
+            <div id="dropArea">
+                <p>Træk din fil hertil eller klik for at vælge en fil</p>
+                <input type="file" name="file" id="fileInput" style="display: none;" onchange="handleFileSelection(event)">
+            </div>
+        </label>
+        <input type="submit" id="uploadButton" value="Upload" class="button" style="display: none;">
+    </form>
+    <div id="files"></div>
+</div>
+
+{% endblock %}

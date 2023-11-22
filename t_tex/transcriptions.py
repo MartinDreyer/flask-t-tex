@@ -7,8 +7,7 @@ from t_tex.auth import login_required
 from t_tex.db import get_db
 
 
-bp = Blueprint('transcribe', __name__)
-
+bp = Blueprint('transcriptions', __name__)
 
 
 @bp.route('/', methods=['GET'])
@@ -21,7 +20,8 @@ def index():
         ' ORDER BY created DESC'
     ).fetchall()
 
-    return render_template('transcribe/index.html', transcriptions=transcriptions)
+
+    return render_template('transcriptions/index.html', transcriptions=transcriptions)
 
 
 
@@ -47,9 +47,9 @@ def create():
                 (title, body, g.user['id'])
             )
             db.commit()
-            return redirect(url_for('transcribe.index'))
+            return redirect(url_for('transcriptions.index'))
 
-    return render_template('transcribe/create.html')
+    return render_template('transcriptions/create.html')
 
 def get_transcription(id, check_author=True):
     transcription = get_db().execute(
@@ -90,9 +90,9 @@ def update(id):
                 (title, body, id)
             )
             db.commit()
-            return redirect(url_for('transcribe.index'))
+            return redirect(url_for('transcriptions.index'))
 
-    return render_template('transcribe/update.html', transcription=transcription)
+    return render_template('transcriptions/update.html', transcription=transcription)
 
 @bp.route('/<int:id>/delete', methods=('POST',))
 @login_required
@@ -101,4 +101,4 @@ def delete(id):
     db = get_db()
     db.execute('DELETE FROM transcription WHERE id = ?', (id,))
     db.commit()
-    return redirect(url_for('transcribe.index'))
+    return redirect(url_for('transcriptions.index'))

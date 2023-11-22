@@ -3,7 +3,8 @@
 {% block header %}
   <h1>{% block title %}Transcriptions{% endblock %}</h1>
   {% if g.user %}
-    <a class="action" href="{{ url_for('transcribe.create') }}">New</a>
+    <a class="action" href="{{ url_for('transcriptions.create') }}">New</a>
+    <a class="action" href="{{ url_for('upload_form.upload_form') }}">Upload fil</a>
   {% endif %}
 {% endblock %}
 
@@ -16,7 +17,7 @@
           <div class="about">by {{ transcription['username'] }} on {{ transcription['created'].strftime('%Y-%m-%d') }}</div>
         </div>
         {% if g.user['id'] == transcription['author_id'] %}
-          <a class="action" href="{{ url_for('transcribe.update', id=transcription['id']) }}">Edit</a>
+          <a class="action" href="{{ url_for('transcriptions.update', id=transcription['id']) }}">Edit</a>
         {% endif %}
       </header>
       <p class="body">{{ transcription['body'] }}</p>

@@ -30,10 +30,12 @@ def create_app(test_config=None):
     from . import auth
     app.register_blueprint(auth.bp)
 
-    from . import transcribe
-    app.register_blueprint(transcribe.bp)
-    app.add_url_rule('/', endpoint='index')
+    from . import upload_form
+    app.register_blueprint(upload_form.bp)
 
+    from . import transcriptions
+    app.register_blueprint(transcriptions.bp)
+    app.add_url_rule('/', endpoint='index')
 
 
     return app

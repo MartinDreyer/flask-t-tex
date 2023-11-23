@@ -1,6 +1,6 @@
 html { font-family: Arial, Helvetica, sans-serif; background: #eee; padding: 1rem; }
 body { max-width: 960px; margin: 0 auto; background: #4e4e4e; }
-h1 { font-family: Arial, Helvetica, sans-serif; color: #eee; margin: 1rem 0; }
+h1 { font-family: Arial, Helvetica, sans-serif; color: #eee; margin: 1rem 0; font-weight: 800;}
 a { color: #87c3eb; }
 hr { border: none; border-top: 1px solid #000; }
 nav { background: #000; display: flex; align-items: center; padding: 0 0.5rem; }
@@ -53,11 +53,19 @@ input[type=submit] { align-self: start; min-width: 10em; }
 .filelist {
     color: #232323;
     list-style: none;
-    padding: 10px;
-    margin-bottom: 2px;
-    font-size: 18px;
-    background-color: #fff;
+    background-color: #c7c7c7;
     border-radius: 5px;
+    padding: 10px;
+}
+
+.filelist li {
+    color: #232323;
+    list-style: none;
+    background-color: #ffffff;
+    padding: 10px;
+    margin-bottom: 5px;
+    border-radius: 5px;
+    box-shadow: 1px 2px 10px #969696 ;
 }
 
 #transcribe-button {

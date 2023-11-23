@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  <h1>{% block title %}Der skete en fejl{% endblock %}</h1>
+{% endblock %}
+
+{% block content %}
+
+<div>
+    <p>{{error}}</p>
+    <a href="/">Tilbage til forsiden</a>
+</div>
+
+{% endblock %}

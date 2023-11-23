@@ -66,7 +66,12 @@ const handleFileSelection = (event) => {
     const dropArea = document.getElementById("dropArea");
     fileInput.files = event.target.files;
 
-    uploadedFiles.push(fileInput.files[0]);
+    if (uploadedFiles.length < 5) {
+      uploadedFiles.push(fileInput.files[0]);
+    } else {
+      alert("Du kan maksimalt uploade fem filer.");
+      return;
+    }
 
     dropArea.style.border = "2px dashed #ccc";
 
@@ -101,15 +106,13 @@ const displayFileNames = (files) => {
     const content = document.getElementById("files");
     let fileList = content.querySelector(".filelist");
 
-    console.log(uploadedFiles);
-
     if (!fileList) {
       fileList = document.createElement("ul");
       fileList.className = "filelist";
       content.appendChild(fileList);
     }
 
-    if (files.length > 1) {
+    if (files.length > 1 && files.length < 5) {
       files.forEach((el) => {
         const filename = el.name;
         const listElement = document.createElement("li");
@@ -131,14 +134,35 @@ const displayFileNames = (files) => {
 
 const submitForm = () => {
   try {
-    if (uploadedFiles.length > 1 && uploadedFiles.length < 5) {
+    if (uploadedFiles.length >= 1 && uploadedFiles.length <= 5) {
       const formData = new FormData();
 
+      // Append each file to the formData object
       uploadedFiles.forEach((file, index) => {
-        // Post files to '/upload'
+        formData.append(`file${index}`, file);
       });
+
+      // Make a single POST request with the formData containing all files
+      fetch("/upload", {
+        method: "POST",
+        body: formData,
+      })
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+          }
+          return response.text(); // or response.json() for JSON content
+        })
+        .then((data) => {
+          console.log("Success:", data);
+        })
+        .catch((error) => {
+          console.error("Error:", error);
+        });
+    } else {
+      console.log("Invalid number of files");
     }
   } catch (error) {
-    console.error(error);
+    console.error("An error occurred:", error);
   }
 };

@@ -10,6 +10,8 @@ from t_tex.db import get_db
 bp = Blueprint('transcriptions', __name__)
 
 
+
+
 @bp.route('/', methods=['GET'])
 @login_required
 def index():

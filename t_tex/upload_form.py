@@ -49,8 +49,14 @@ def upload():
                     file.save(filepath)
 
                     transcription = transcribe(filepath, language='danish', model_size='large')
-                    print(transcription)
-                    return "hello"
+                    
+                    if transcription:
+                        srt_dir = os.path.join(os.getcwd(), 'srt')
+                        os.makedirs(srt_dir, exist_ok=True)
+                        output_to_text_file(transcription, os.path.join(srt_dir, (base + '.srt')))
+
+                                           
+
                 except Exception as e:
                     traceback.print_exc()
                     flash('An error occurred while processing the file')

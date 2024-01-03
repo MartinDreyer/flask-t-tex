@@ -1,5 +1,5 @@
 from flask import (
-    Blueprint, flash, render_template, request, send_from_directory
+    Blueprint, flash, g, render_template, request, url_for, redirect
 )
 from werkzeug.exceptions import abort
 from werkzeug.utils import secure_filename
@@ -9,8 +9,9 @@ import io
 import traceback
 from t_tex.auth import login_required
 from t_tex.db import get_db
-from t_tex.process import (allowed_file, transcribe_file, output_to_text_file, optimize_file)
+from t_tex.process import (allowed_file, transcribe_file, output_to_text_file, optimize_file, delete_file)
 bp = Blueprint('upload_form', __name__)
+transcriptions_bp = Blueprint('transcriptions', __name__)
 
 ALLOWED_EXTENSIONS = {'mp4', 'mp3', 'wav', 'avi'}
 
@@ -49,13 +50,36 @@ def upload():
 
                     file.save(path)
                     optimize_file(path)
-                    print(path)
-                    transcription = transcribe_file(filename)
+                    delete_file(path)
+
+                    ogg_file = path.split(".")[0] + ".ogg"
+
+                    transcription = transcribe_file(ogg_file)
+
                     
                     if transcription:
                         srt_dir = os.path.join(os.getcwd(), 't_tex/srt')
+                        srt_path = os.path.join(srt_dir, (base + '.srt'))
                         os.makedirs(srt_dir, exist_ok=True)
-                        output_to_text_file(transcription, os.path.join(srt_dir, (base + '.srt')))
+                        output_to_text_file(transcription, srt_path)
+
+                        # Save SRT to database
+                        db = get_db()
+                        with open(srt_path, "r") as f:
+                            body = f.read()
+                        db.execute(
+                            'INSERT INTO transcription (title, body, author_id)'
+                            ' VALUES (?, ?, ?)',
+                            (base, body, g.user['id'])
+                        )
+                        db.commit()
+                        delete_file(ogg_file)
+                        delete_file(srt_path)
+                        # Delete SRT and ogg-file locally.
+                        return redirect(url_for('transcriptions.index'))
+
+
+                    
 
                                            
 
@@ -68,7 +92,6 @@ def upload():
                 flash(f'Invalid file format for {key}')
                 return render_template('upload_form/error.html', error=f"Ugyldig filformat for {key}")
 
-        return "Files successfully uploaded!"
 
     except Exception as e:
         traceback.print_exc()

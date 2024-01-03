@@ -14,13 +14,16 @@ def allowed_file(filename):
 
 def optimize_file(filename):
     command = '-i ' + filename + ' -vn -map_metadata -1 -ac 1 -c:a libopus -b:a 12k -application voip ' + filename.split(".")[0] + '.ogg'
-    ffmpeg_path = os.path.join(os.path.dirname(__file__), 'ffmpeg.exe')
+    ffmpeg_path = "ffmpeg" # In windows place ffmpeg.exe in t_tex: os.path.join(os.path.dirname(__file__), 'ffmpeg.exe')
     cmd_string = ffmpeg_path + ' ' + command
     subprocess.call(cmd_string, shell=True)
+    
+def delete_file(filename):
+    os.remove(filename)
 
 def transcribe_file(filename):
     model = whisper.load_model("large")
-    audio = whisper.load_audio(filename.split(".")[0] + ".ogg")
+    audio = whisper.load_audio(filename)
     transcription = model.transcribe(audio=audio, verbose=True, fp16=False, word_timestamps=True, language="danish")
     return transcription
 

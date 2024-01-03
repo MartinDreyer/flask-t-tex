@@ -1,11 +1,15 @@
 {% extends 'base.html' %}
 
 {% block header %}
-  <h1>{% block title %}Upload File{% endblock %}</h1>
+  <h1>{% block title %}Upload Fil{% endblock %}</h1>
 {% endblock %}
 
 {% block content %}
 
+<div id="loader" style="display:none">
+    <h2>Din fil bliver transskriberet</h2>
+    <div class="lds-ellipsis"><div></div><div></div><div></div><div></div></div>
+</div>
 <div id="upload-form-container" class="content-box">
     <script src="{{url_for('static', filename="upload_utils.js")}}"></script>
     <form id="uploadForm" method="post" enctype="multipart/form-data">

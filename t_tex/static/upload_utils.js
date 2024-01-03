@@ -137,6 +137,11 @@ const submitForm = () => {
     if (uploadedFiles.length >= 1 && uploadedFiles.length <= 5) {
       const formData = new FormData();
 
+      const loader = document.getElementById("loader")
+      const formContainer = document.getElementById("upload-form-container")
+      loader.style.display = "flex"
+      formContainer.style.display = "none"
+
       // Append each file to the formData object
       uploadedFiles.forEach((file, index) => {
         formData.append(`file${index}`, file);
@@ -151,10 +156,10 @@ const submitForm = () => {
           if (!response.ok) {
             throw new Error(`HTTP error! Status: ${response.status}`);
           }
-          return response.text(); // or response.json() for JSON content
-        })
-        .then((data) => {
-          console.log("Success:", data);
+          loader.style.display = "none"
+          formContainer.style.display = "flex"
+          window.location.href = response.url;
+
         })
         .catch((error) => {
           console.error("Error:", error);

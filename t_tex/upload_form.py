@@ -9,7 +9,7 @@ import io
 import traceback
 from t_tex.auth import login_required
 from t_tex.db import get_db
-from t_tex.process import (allowed_file, transcribe, output_to_text_file)
+from t_tex.process import (allowed_file, transcribe_file, output_to_text_file, optimize_file)
 bp = Blueprint('upload_form', __name__)
 
 ALLOWED_EXTENSIONS = {'mp4', 'mp3', 'wav', 'avi'}
@@ -39,19 +39,21 @@ def upload():
 
             if file and allowed_file(file.filename):
                 try:
-                    upload_dir = os.path.join(os.getcwd(), 'uploads')
+                    upload_dir = os.path.abspath(os.path.join(os.getcwd(), 't_tex/uploads'))
                     os.makedirs(upload_dir, exist_ok=True)
+
 
                     filename = secure_filename(file.filename)
                     base = Path(os.path.join(upload_dir, filename)).stem
+                    path = os.path.join(upload_dir, filename)
 
-                    filepath = os.path.join(upload_dir, filename)
-                    file.save(filepath)
-
-                    transcription = transcribe(filepath, language='danish', model_size='large')
+                    file.save(path)
+                    optimize_file(path)
+                    print(path)
+                    transcription = transcribe_file(filename)
                     
                     if transcription:
-                        srt_dir = os.path.join(os.getcwd(), 'srt')
+                        srt_dir = os.path.join(os.getcwd(), 't_tex/srt')
                         os.makedirs(srt_dir, exist_ok=True)
                         output_to_text_file(transcription, os.path.join(srt_dir, (base + '.srt')))
 

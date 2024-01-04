@@ -9,7 +9,7 @@ import io
 import traceback
 from t_tex.auth import login_required
 from t_tex.db import get_db
-from t_tex.process import (allowed_file, transcribe_file, output_to_text_file, optimize_file, delete_file)
+from t_tex.process import (allowed_file, transcribe_file, optimize_file, delete_file, delete_output, get_transcription)
 bp = Blueprint('upload_form', __name__)
 transcriptions_bp = Blueprint('transcriptions', __name__)
 
@@ -40,7 +40,7 @@ def upload():
 
             if file and allowed_file(file.filename):
                 try:
-                    upload_dir = os.path.abspath(os.path.join(os.getcwd(), 't_tex/uploads'))
+                    upload_dir = os.path.abspath(os.path.join(os.getcwd(), 'uploads/'))
                     os.makedirs(upload_dir, exist_ok=True)
 
 
@@ -53,19 +53,20 @@ def upload():
                     delete_file(path)
 
                     ogg_file = path.split(".")[0] + ".ogg"
-
                     transcription = transcribe_file(ogg_file)
 
                     
+
+                    
                     if transcription:
-                        srt_dir = os.path.join(os.getcwd(), 't_tex/srt')
-                        srt_path = os.path.join(srt_dir, (base + '.srt'))
+                        srt_dir = os.path.join(os.getcwd(), 'output/')
+                        output_path = os.path.join(srt_dir, (base + '.srt'))
                         os.makedirs(srt_dir, exist_ok=True)
-                        output_to_text_file(transcription, srt_path)
+                        # output_to_text_file(transcription, output_path)
 
                         # Save SRT to database
                         db = get_db()
-                        with open(srt_path, "r") as f:
+                        with open(output_path, "r") as f:
                             body = f.read()
                         db.execute(
                             'INSERT INTO transcription (title, body, author_id)'
@@ -73,10 +74,14 @@ def upload():
                             (base, body, g.user['id'])
                         )
                         db.commit()
+
+                    # Delete SRT and ogg-file locally.
+                    try:
                         delete_file(ogg_file)
-                        delete_file(srt_path)
-                        # Delete SRT and ogg-file locally.
-                        return redirect(url_for('transcriptions.index'))
+                        delete_output(path)
+                    except:
+                        pass
+                    return redirect(url_for('transcriptions.index'))
 
 
                     

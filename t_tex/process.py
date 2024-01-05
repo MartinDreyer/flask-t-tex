@@ -77,7 +77,30 @@ def get_transcription(filename, extension):
 @profile
 def transcribe_file(filename):
     try:
-        subprocess.run(['whisper', filename, '--language', language, '--model', model_name, '--output_dir', OUTPUT_DIR, '--device', DEVICE], capture_output=True)
+        command = [
+            'whisper', 
+            filename,
+            '--language', 
+            language, 
+            '--model', 
+            model_name, 
+            '--output_dir', 
+            OUTPUT_DIR, 
+            '--device', 
+            DEVICE]
+        
+        result = subprocess.run(
+            command, 
+            capture_output=True,
+            shell=False)
+        
+        # Check the return code
+        if result.returncode == 0:
+            print(f"Transcription successful.")
+        else:
+            print(f"Error during transcription. Return code: {result.returncode}")
+            print(result.stderr)
+
         transcription = get_transcription(filename, ".json")
     except Exception as e:
         print(f"Error: {e}")

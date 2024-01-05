@@ -15,7 +15,7 @@ OUTPUT_DIR = os.path.join(os.getcwd(), 'output/')
 MAX_LINE_COUNT = 42
 THREADS = 4
 WORD_TIMESTAMPS = True
-model_name = "large-v3"
+model_name = "base"
 language="da"
 
 @profile

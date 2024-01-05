@@ -30,7 +30,6 @@ def upload():
             flash('No files in the request')
             return render_template('upload_form/error.html', error="Ingen filer i forespørselen")
 
-
         for key in request.files:
             file = request.files[key]
 
@@ -40,29 +39,34 @@ def upload():
 
             if file and allowed_file(file.filename):
                 try:
+                    # Create directory for uploads, if it doesn't exist.
                     upload_dir = os.path.abspath(os.path.join(os.getcwd(), 'uploads/'))
                     os.makedirs(upload_dir, exist_ok=True)
 
-
+                    # Save file
                     filename = secure_filename(file.filename)
-                    base = Path(os.path.join(upload_dir, filename)).stem
                     path = os.path.join(upload_dir, filename)
-
                     file.save(path)
+
+                    # Optimize file with ffmpeg
                     optimize_file(path)
+
+                    # Delete original uploaded file.
                     delete_file(path)
 
+                    # Set path for optimized file
                     ogg_file = path.split(".")[0] + ".ogg"
+
+                    # Create output directory if it doesn't exist
+                    output_dir = os.path.join(os.getcwd(), 'output/')
+                    os.makedirs(output_dir, exist_ok=True)
+
+                    # Transcribe file
                     transcription = transcribe_file(ogg_file)
 
-                    
-
-                    
                     if transcription:
-                        srt_dir = os.path.join(os.getcwd(), 'output/')
-                        output_path = os.path.join(srt_dir, (base + '.srt'))
-                        os.makedirs(srt_dir, exist_ok=True)
-                        # output_to_text_file(transcription, output_path)
+                        base = Path(os.path.join(upload_dir, filename)).stem
+                        output_path = os.path.join(output_dir, (base + '.srt'))
 
                         # Save SRT to database
                         db = get_db()
@@ -75,19 +79,16 @@ def upload():
                         )
                         db.commit()
 
-                    # Delete SRT and ogg-file locally.
+                    # Delete SRT and ogg-file locally
                     try:
                         delete_file(ogg_file)
                         delete_output(path)
                     except:
                         pass
+
+                    # Redirect user to transcriptions on success
                     return redirect(url_for('transcriptions.index'))
-
-
-                    
-
-                                           
-
+                                      
                 except Exception as e:
                     traceback.print_exc()
                     flash('An error occurred while processing the file')

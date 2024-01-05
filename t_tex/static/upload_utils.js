@@ -49,6 +49,13 @@ const handleDrop = (event) => {
     fileInput.files = event.dataTransfer.files;
     dropArea.style.border = "2px dashed #ccc";
 
+    if (uploadedFiles.length < 5) {
+      uploadedFiles.push(fileInput.files[0]);
+    } else {
+      alert("Du kan maksimalt uploade fem filer.");
+      return;
+    }
+
     if (checkExtension(fileInput.files[0].name)) {
       displayFileNames(fileInput.files);
     } else {
@@ -137,10 +144,10 @@ const submitForm = () => {
     if (uploadedFiles.length >= 1 && uploadedFiles.length <= 5) {
       const formData = new FormData();
 
-      const loader = document.getElementById("loader")
-      const formContainer = document.getElementById("upload-form-container")
-      loader.style.display = "flex"
-      formContainer.style.display = "none"
+      const loader = document.getElementById("loader");
+      const formContainer = document.getElementById("upload-form-container");
+      loader.style.display = "flex";
+      formContainer.style.display = "none";
 
       // Append each file to the formData object
       uploadedFiles.forEach((file, index) => {
@@ -156,10 +163,9 @@ const submitForm = () => {
           if (!response.ok) {
             throw new Error(`HTTP error! Status: ${response.status}`);
           }
-          loader.style.display = "none"
-          formContainer.style.display = "flex"
+          loader.style.display = "none";
+          formContainer.style.display = "flex";
           window.location.href = response.url;
-
         })
         .catch((error) => {
           console.error("Error:", error);

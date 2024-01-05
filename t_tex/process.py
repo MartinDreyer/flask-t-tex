@@ -1,6 +1,4 @@
 import os
-import whisper
-import traceback
 import torch
 import subprocess
 from memory_profiler import profile
@@ -15,7 +13,7 @@ OUTPUT_DIR = os.path.join(os.getcwd(), 'output/')
 MAX_LINE_COUNT = 42
 THREADS = 4
 WORD_TIMESTAMPS = True
-model_name = "base"
+model_name = "large-v3"
 language="da"
 
 @profile
@@ -57,7 +55,7 @@ def get_transcription(filename, extension):
 @profile
 def transcribe_file(filename):
     try:
-        subprocess.run(['whisper', filename, '--language', language, '--model', model_name, '--output_dir', OUTPUT_DIR], capture_output=True)
+        subprocess.run(['whisper', filename, '--language', language, '--model', model_name, '--output_dir', OUTPUT_DIR, '--device', DEVICE], capture_output=True)
         transcription = get_transcription(filename, ".json")
     except Exception as e:
         print(f"Error: {e}")

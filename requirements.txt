@@ -5,4 +5,4 @@ torch==2.0.1
 Werkzeug==3.0.1
 whisper==1.1.10
 memory_profiler==0.61.0
-uWSGI==2.0.24
+waitress==3.0.0

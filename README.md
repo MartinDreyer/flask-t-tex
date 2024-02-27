@@ -8,3 +8,6 @@ T-TEX is a browser based transcription service developed at TV 2 Fyn running in 
 
 ## Setup
 Description under way ...
+
+## Contributing
+Contributions are welcome. Feel free to open an issue or submit a pull request. The app is under the GNU GENERAL PUBLIC LICENSE, please adhere to the terms of the license, which you can read in the LICENSE file.

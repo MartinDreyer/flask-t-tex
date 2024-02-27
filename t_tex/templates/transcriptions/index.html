@@ -1,9 +1,9 @@
 {% extends 'base.html' %}
 
 {% block header %}
-  <h1>{% block title %}Transcriptions{% endblock %}</h1>
+  <h1>{% block title %}Transskriberinger{% endblock %}</h1>
   {% if g.user %}
-    <a class="action" href="{{ url_for('transcriptions.create') }}">New</a>
+    <!-- <a class="action" href="{{ url_for('transcriptions.create') }}">New</a> -->
     <a class="action" href="{{ url_for('upload_form.upload_form') }}">Upload fil</a>
   {% endif %}
 {% endblock %}
@@ -11,16 +11,19 @@
 {% block content %}
   {% for transcription in transcriptions %}
     <article class="post">
+      <script src="{{url_for('static', filename="download_utils.js")}}"></script>
       <header>
         <div>
           <h1>{{ transcription['title'] }}</h1>
           <div class="about">by {{ transcription['username'] }} on {{ transcription['created'].strftime('%Y-%m-%d') }}</div>
         </div>
+          <a class="action" href="#" onclick="download_srt('{{ transcription['id']}}', '{{ transcription['title']}}')">Download</a>
+          <a class="action" id="{{ ('button_' + transcription['id']|tojson|safe )}}" href="#" onclick="toggle_body('{{ transcription['id']}}')">Vis</a>
         {% if g.user['id'] == transcription['author_id'] %}
-          <a class="action" href="{{ url_for('transcriptions.update', id=transcription['id']) }}">Edit</a>
+          <a class="action" href="{{ url_for('transcriptions.update', id=transcription['id']) }}">Rediger</a>
         {% endif %}
       </header>
-      <p class="body">{{ transcription['body'] }}</p>
+      <p class="body" id={{transcription['id']}}>{{ transcription['body'] }}</p>
     </article>
     {% if not loop.last %}
       <hr>

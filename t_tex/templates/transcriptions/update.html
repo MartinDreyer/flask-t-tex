@@ -1,20 +1,20 @@
 {% extends 'base.html' %}
 
 {% block header %}
-  <h1>{% block title %}Edit "{{ transcription['title'] }}"{% endblock %}</h1>
+  <h1>{% block title %}Rediger "{{ transcription['title'] }}"{% endblock %}</h1>
 {% endblock %}
 
 {% block content %}
   <form method="post">
-    <label for="title">Title</label>
+    <label for="title">Titel</label>
     <input name="title" id="title"
       value="{{ request.form['title'] or transcription['title'] }}" required>
-    <label for="body">Body</label>
+    <label for="body">Indhold</label>
     <textarea name="body" id="body">{{ request.form['body'] or transcription['body'] }}</textarea>
-    <input type="submit" value="Save">
+    <input type="submit" value="Gem">
   </form>
   <hr>
   <form action="{{ url_for('transcriptions.delete', id=transcription['id']) }}" method="post">
-    <input class="danger" type="submit" value="Delete" onclick="return confirm('Are you sure?');">
+    <input class="danger" type="submit" value="Slet" onclick="return confirm('Er du sikker?');">
   </form>
 {% endblock %}

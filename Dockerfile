@@ -16,4 +16,4 @@ COPY . .
 
 EXPOSE 8888
 
-CMD ["flask", "--app", "t_tex", "run", "--host=0.0.0.0", "--port=8888"]
+CMD ["uwsgi", "--socket", "0.0.0.0:8888", "--protocol=http", "--wsgi", "t_tex.__init__:app"]
